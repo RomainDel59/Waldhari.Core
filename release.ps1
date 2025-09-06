@@ -11,23 +11,32 @@ $modDir = Join-Path $solutionDir "Waldhari.Core\Properties\Waldhari.Core"
 
 $zipFile = Join-Path $releaseDir "Waldhari.Core.$version.zip"
 
+# Remove existing zip if present
 if (Test-Path $zipFile) { Remove-Item $zipFile }
 
-# Crée un dossier temporaire pour rassembler tout
+# Create a temporary folder to gather all files
 $tempDir = Join-Path $env:TEMP "WaldhariCoreRelease"
 if (Test-Path $tempDir) { Remove-Item $tempDir -Recurse -Force }
 New-Item -ItemType Directory -Path $tempDir | Out-Null
 
-# Copie la DLL
-Copy-Item -Path "$buildDir\Waldhari.Core.dll" -Destination $tempDir
+# Create the scripts/ subfolder in the temporary folder
+$scriptsDir = Join-Path $tempDir "scripts"
+New-Item -ItemType Directory -Path $scriptsDir | Out-Null
 
-# Copie le répertoire de localisation avec son arborescence relative
-Copy-Item -Path $modDir -Destination $tempDir -Recurse
+# Copy the DLL into scripts/
+Copy-Item -Path "$buildDir\Waldhari.Core.dll" -Destination $scriptsDir
 
-# Crée le ZIP
+# Create an empty log file alongside the DLL
+New-Item -ItemType File -Path (Join-Path $scriptsDir "Waldhari.Core.log") | Out-Null
+
+# Copy the localization directory under scripts/
+$destModDir = Join-Path $scriptsDir "Waldhari.Core"
+Copy-Item -Path $modDir -Destination $destModDir -Recurse
+
+# Create the ZIP archive
 Compress-Archive -Path "$tempDir\*" -DestinationPath $zipFile
 
-# Nettoyage
+# Cleanup temporary folder
 Remove-Item $tempDir -Recurse -Force
 
 Write-Host "Release generated: $zipFile"

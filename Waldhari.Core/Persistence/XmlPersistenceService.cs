@@ -12,7 +12,7 @@ namespace Waldhari.Core.Persistence
         public XmlPersistenceService(string extension = "xml")
         {
             // StartupPath = GTAV directory
-            _basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "Waldhari");
+            _basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari");
             _extension = extension;
 
             if (!Directory.Exists(_basePath))

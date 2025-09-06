@@ -14,7 +14,7 @@ namespace Waldhari.Core.Logging
         {
             Level = level;
 
-            string logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "Waldhari");
+            var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari");
 
             if (!Directory.Exists(logsDir))
                 Directory.CreateDirectory(logsDir);

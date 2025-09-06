@@ -15,7 +15,7 @@ namespace Waldhari.Core.Localization
 
         public CsvLanguageService(string modName = "Waldhari.Core", string languageCode = null, IEnumerable<string> features = null)
         {
-            _localizationDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "Waldhari", modName);
+            _localizationDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari", modName);
             if (!Directory.Exists(_localizationDir))
                 Directory.CreateDirectory(_localizationDir);
 

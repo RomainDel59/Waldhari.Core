@@ -26,7 +26,7 @@ namespace Waldhari.Core.Tests.Persistence
         [TearDown]
         public void Cleanup()
         {
-            string scriptsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts");
+            string scriptsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari");
 
             if (Directory.Exists(scriptsPath))
             {
@@ -84,7 +84,7 @@ namespace Waldhari.Core.Tests.Persistence
         [Test]
         public void Constructor_CreatesDirectory_WhenNotExists()
         {
-            string tempPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory + "/scripts/Waldhari");
+            var tempPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"Waldhari");
             Assert.False(Directory.Exists(tempPath));
 
             var service = new XmlPersistenceService();
@@ -108,9 +108,9 @@ namespace Waldhari.Core.Tests.Persistence
         [Test]
         public void Load_Throws_InvalidOperationException_OnCorruptedFile()
         {
-            string tempDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory + "/scripts/Waldhari");
+            var tempDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"Waldhari");
             Directory.CreateDirectory(tempDir);
-            string filePath = Path.Combine(tempDir, "corrupt.xml");
+            var filePath = Path.Combine(tempDir, "corrupt.xml");
 
             File.WriteAllText(filePath, "notxml");
 

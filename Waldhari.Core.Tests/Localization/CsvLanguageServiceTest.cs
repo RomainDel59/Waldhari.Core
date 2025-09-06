@@ -21,7 +21,7 @@ namespace Waldhari.Core.Tests.Localization
         [TearDown]
         public void Cleanup()
         {
-            var scriptsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts");
+            var scriptsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari");
 
             if (Directory.Exists(scriptsPath))
             {
@@ -34,7 +34,7 @@ namespace Waldhari.Core.Tests.Localization
         {
             var service = new CsvLanguageService();
 
-            var expectedDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "Waldhari",
+            var expectedDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari",
                 "Waldhari.Core");
             Assert.True(Directory.Exists(expectedDir));
             CollectionAssert.AreEqual(new List<string> { "General" },
@@ -49,7 +49,7 @@ namespace Waldhari.Core.Tests.Localization
             var languageCode = "fr-FR";
             var service = new CsvLanguageService(modName, languageCode);
 
-            var expectedDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "Waldhari", modName);
+            var expectedDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari", modName);
             Assert.True(Directory.Exists(expectedDir));
             Assert.AreEqual(languageCode, service.CurrentLanguage);
             CollectionAssert.AreEqual(new List<string> { "General" },
@@ -73,7 +73,7 @@ namespace Waldhari.Core.Tests.Localization
         {
             var service = new CsvLanguageService(string.Empty);
 
-            var expectedDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "Waldhari", string.Empty);
+            var expectedDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari", string.Empty);
             Assert.True(Directory.Exists(expectedDir));
             CollectionAssert.AreEqual(new List<string> { "General" },
                 TestsHelper.GetPrivateField<List<string>>(service, "_features"));
@@ -307,7 +307,7 @@ namespace Waldhari.Core.Tests.Localization
         {
             const string modName = "TestMod";
             var service = new CsvLanguageService(modName);
-            var langDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "Waldhari", modName,
+            var langDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari", modName,
                 CultureInfo.CurrentCulture.Name);
             Directory.CreateDirectory(langDir);
 
@@ -319,8 +319,6 @@ namespace Waldhari.Core.Tests.Localization
             var messages = TestsHelper.GetPrivateField<Dictionary<string, string>>(service, "_messages");
             Assert.True(messages.ContainsKey(feature));
             Assert.AreEqual("Value", messages[feature]);
-
-            Directory.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts"), true);
         }
 
         [Test]
@@ -328,7 +326,7 @@ namespace Waldhari.Core.Tests.Localization
         {
             const string modName = "TestMod";
             var service = new CsvLanguageService(modName);
-            var langDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "Waldhari", modName,
+            var langDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari", modName,
                 CultureInfo.CurrentCulture.Name);
 
             Assert.DoesNotThrow(() => service.Load(modName));
@@ -343,7 +341,7 @@ namespace Waldhari.Core.Tests.Localization
             const string modName = "TestMod";
             const string languageCode = "fr-FR";
             var service = new CsvLanguageService(modName);
-            var langDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "Waldhari", modName,
+            var langDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari", modName,
                 languageCode);
             Directory.CreateDirectory(langDir);
 
@@ -356,7 +354,6 @@ namespace Waldhari.Core.Tests.Localization
             Assert.True(messages.ContainsKey(feature));
             Assert.AreEqual("Bonjour", messages[feature]);
 
-            Directory.Delete(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts"), true);
         }
 
         [Test]

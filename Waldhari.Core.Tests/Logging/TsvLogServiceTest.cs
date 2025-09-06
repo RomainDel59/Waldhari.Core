@@ -21,7 +21,7 @@ namespace Waldhari.Core.Tests.Logging
         [TearDown]
         public void Cleanup()
         {
-            var scriptsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts");
+            var scriptsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari");
 
             if (Directory.Exists(scriptsPath))
             {
@@ -32,15 +32,13 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void Constructor_CreatesLogsDirectory_WhenNotExists()
         {
-            var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "Waldhari");
+            var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari");
             Assert.False(Directory.Exists(logsDir));
             
             var logger = new TsvLogService("TestMod");
 
             Assert.True(Directory.Exists(logsDir));
             Assert.AreEqual(LogLevel.Debug, logger.Level);
-            Assert.True(File.Exists(Path.Combine(logsDir, "TestMod.log")) ||
-                        !File.Exists(Path.Combine(logsDir, "TestMod.log")));
         }
 
         [Test]
@@ -56,7 +54,7 @@ namespace Waldhari.Core.Tests.Logging
         {
             var logger = new TsvLogService();
 
-            var expectedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "Waldhari",
+            var expectedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari",
                 "Waldhari.Core.log");
             Assert.AreEqual(expectedFile, TestsHelper.GetPrivateField<string>(logger, "_logFilePath"));
             Assert.AreEqual(LogLevel.Debug, logger.Level);
@@ -67,14 +65,14 @@ namespace Waldhari.Core.Tests.Logging
         {
             var logger = new TsvLogService(string.Empty);
 
-            var expectedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "Waldhari", ".log");
+            var expectedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari", ".log");
             Assert.AreEqual(expectedFile, TestsHelper.GetPrivateField<string>(logger, "_logFilePath"));
         }
 
         [Test]
         public void Constructor_DirectoryAlreadyExists_DoesNotThrow()
         {
-            var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "Waldhari");
+            var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari");
             Directory.CreateDirectory(logsDir);
 
             // ReSharper disable once ObjectCreationAsStatement

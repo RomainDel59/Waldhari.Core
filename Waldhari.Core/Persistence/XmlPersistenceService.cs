@@ -39,7 +39,7 @@ namespace Waldhari.Core.Persistence
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Error loading file {fileName}.xml", ex);
+                throw new InvalidOperationException($"Error loading file {fileName}", ex);
             }
         }
 
@@ -56,19 +56,19 @@ namespace Waldhari.Core.Persistence
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Error saving file {fileName}.xml", ex);
+                throw new InvalidOperationException($"Error saving file {fileName}", ex);
             }
         }
 
         public bool Exists(string fileName)
         {
-            var fullPath = Path.Combine(_basePath, fileName+".xml");
+            var fullPath = GetFullPath(fileName);
             return File.Exists(fullPath);
         }
 
         public void Delete(string fileName)
         {
-            var fullPath = Path.Combine(_basePath, fileName+".xml");
+            var fullPath = GetFullPath(fileName);
             if (File.Exists(fullPath))
                 File.Delete(fullPath);
         }

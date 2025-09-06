@@ -109,6 +109,21 @@ namespace Waldhari.Core.Tests.Persistence
             var ex = Assert.Throws<InvalidOperationException>(() => service.Load<TestData>("corrupt"));
             Assert.IsNotNull(ex.InnerException);
         }
+        
+        [Test]
+        public void Save_And_Load_Works_WithCustomExtension()
+        {
+            var data = new TestData { Name = "Test", Value = 42 };
+            var service = new XmlPersistenceService("sav");
+            service.Save("test", data);
+
+            var loaded = service.Load<TestData>("test");
+
+            Assert.NotNull(loaded);
+            Assert.AreEqual("Test", loaded.Name);
+            Assert.AreEqual(42, loaded.Value);
+        }
+
 
 
         

@@ -17,6 +17,5 @@ Global
 		{8E7CF21D-C3C5-4D52-92D3-55E33B05E2B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8E7CF21D-C3C5-4D52-92D3-55E33B05E2B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E7CF21D-C3C5-4D52-92D3-55E33B05E2B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8E7CF21D-C3C5-4D52-92D3-55E33B05E2B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

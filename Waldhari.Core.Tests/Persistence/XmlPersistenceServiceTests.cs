@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using System.IO;
 using Waldhari.Core.Persistence;
+using Waldhari.Core.Tests.Logging;
 
 namespace Waldhari.Core.Tests.Persistence
 {
@@ -14,6 +15,12 @@ namespace Waldhari.Core.Tests.Persistence
         {
             public string Name { get; set; }
             public int Value { get; set; }
+        }
+        
+        [SetUp]
+        public void Setup()
+        {
+            Core.SetLogger(new StubLogService());
         }
         
         [TearDown]
@@ -81,6 +88,7 @@ namespace Waldhari.Core.Tests.Persistence
             Assert.False(Directory.Exists(tempPath));
 
             var service = new XmlPersistenceService();
+            Assert.NotNull(service);
 
             Assert.True(Directory.Exists(tempPath));
         }
@@ -91,7 +99,7 @@ namespace Waldhari.Core.Tests.Persistence
             var service = new XmlPersistenceService();
             var data = new TestData { Name = "Test", Value = 1 };
 
-            string invalidPath = @"<>:\invalid";
+            const string invalidPath = @"<>:\invalid";
 
             var ex = Assert.Throws<InvalidOperationException>(() => service.Save(invalidPath, data));
             Assert.IsNotNull(ex.InnerException);

@@ -12,24 +12,12 @@ namespace Waldhari.Core.Tests.Logging
     [TestOf(typeof(TsvLogService))]
     public class TsvLogServiceTest
     {
-        private static T GetPrivateField<T>(object obj, string fieldName)
+        [SetUp]
+        public void Setup()
         {
-            var field = obj.GetType().GetField(fieldName,
-                BindingFlags.NonPublic | BindingFlags.Instance);
-            Debug.Assert(field != null, nameof(field) + " != null");
-            return (T)field.GetValue(obj);
+            Core.SetLogger(new StubLogService());
         }
         
-
-        private static MethodInfo GetPrivateMethod(TsvLogService logger, string name)
-        {
-            
-            var method = logger.GetType().GetMethod(name,
-                BindingFlags.NonPublic | BindingFlags.Instance);
-            Debug.Assert(method != null, nameof(method) + " != null");
-            return method;
-        }
-
         [TearDown]
         public void Cleanup()
         {
@@ -70,7 +58,7 @@ namespace Waldhari.Core.Tests.Logging
 
             var expectedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "Waldhari",
                 "Waldhari.Core.log");
-            Assert.AreEqual(expectedFile, GetPrivateField<string>(logger, "_logFilePath"));
+            Assert.AreEqual(expectedFile, TestsHelper.GetPrivateField<string>(logger, "_logFilePath"));
             Assert.AreEqual(LogLevel.Debug, logger.Level);
         }
 
@@ -80,7 +68,7 @@ namespace Waldhari.Core.Tests.Logging
             var logger = new TsvLogService(string.Empty);
 
             var expectedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "Waldhari", ".log");
-            Assert.AreEqual(expectedFile, GetPrivateField<string>(logger, "_logFilePath"));
+            Assert.AreEqual(expectedFile, TestsHelper.GetPrivateField<string>(logger, "_logFilePath"));
         }
 
         [Test]
@@ -97,7 +85,7 @@ namespace Waldhari.Core.Tests.Logging
         public void CleanString_NullInput_ReturnsEmptyQuoted()
         {
             var logger = new TsvLogService();
-            var method = GetPrivateMethod(logger, "CleanString");
+            var method = TestsHelper.GetPrivateMethod(logger, "CleanString");
             Debug.Assert(method != null, nameof(method) + " != null");
 
             string result = (string)method.Invoke(logger, new object[] { null });
@@ -108,7 +96,7 @@ namespace Waldhari.Core.Tests.Logging
         public void CleanString_EmptyString_ReturnsEmptyQuoted()
         {
             var logger = new TsvLogService();
-            var method = GetPrivateMethod(logger,"CleanString");
+            var method = TestsHelper.GetPrivateMethod(logger,"CleanString");
 
             string result = (string)method.Invoke(logger, new object[] { string.Empty });
             Assert.AreEqual("\"\"", result);
@@ -118,7 +106,7 @@ namespace Waldhari.Core.Tests.Logging
         public void CleanString_NoSpecialCharacters_ReturnsQuoted()
         {
             var logger = new TsvLogService();
-            var method = GetPrivateMethod(logger,"CleanString");
+            var method = TestsHelper.GetPrivateMethod(logger,"CleanString");
 
             string input = "Hello World";
             string result = (string)method.Invoke(logger, new object[] { input });
@@ -130,7 +118,7 @@ namespace Waldhari.Core.Tests.Logging
         public void CleanString_Tab_ReplacedWithSpace()
         {
             var logger = new TsvLogService();
-            var method = GetPrivateMethod(logger,"CleanString");
+            var method = TestsHelper.GetPrivateMethod(logger,"CleanString");
 
             string input = "Hello\tWorld";
             string result = (string)method.Invoke(logger, new object[] { input });
@@ -142,7 +130,7 @@ namespace Waldhari.Core.Tests.Logging
         public void CleanString_Quotes_EscapedProperly()
         {
             var logger = new TsvLogService();
-            var method = GetPrivateMethod(logger,"CleanString");
+            var method = TestsHelper.GetPrivateMethod(logger,"CleanString");
 
             string input = "She said \"Hello\"";
             string result = (string)method.Invoke(logger, new object[] { input });
@@ -154,7 +142,7 @@ namespace Waldhari.Core.Tests.Logging
         public void CleanString_MixedSpecialCharacters()
         {
             var logger = new TsvLogService();
-            var method = GetPrivateMethod(logger,"CleanString");
+            var method = TestsHelper.GetPrivateMethod(logger,"CleanString");
 
             string input = "Line1\nLine2\t\"Quote\"";
             string result = (string)method.Invoke(logger, new object[] { input });
@@ -166,11 +154,11 @@ namespace Waldhari.Core.Tests.Logging
         public void Write_DebugMessage_WritesToFile_WhenLevelAllows()
         {
             var logger = new TsvLogService("TestMod");
-            var method = GetPrivateMethod(logger,"Write");
+            var method = TestsHelper.GetPrivateMethod(logger,"Write");
 
             method.Invoke(logger, new object[] { LogLevel.Debug, "Debug message", null });
 
-            string logPath = GetPrivateField<string>(logger, "_logFilePath");
+            string logPath = TestsHelper.GetPrivateField<string>(logger, "_logFilePath");
             string content = File.ReadAllText(logPath);
             Assert.True(content.Contains("Debug\t\"Debug message\""));
         }
@@ -179,11 +167,11 @@ namespace Waldhari.Core.Tests.Logging
         public void Write_InfoMessage_WritesToFile_WhenLevelAllows()
         {
             var logger = new TsvLogService("TestMod");
-            var method = GetPrivateMethod(logger,"Write");
+            var method = TestsHelper.GetPrivateMethod(logger,"Write");
 
             method.Invoke(logger, new object[] { LogLevel.Info, "Info message", null });
 
-            string logPath = GetPrivateField<string>(logger, "_logFilePath");
+            string logPath = TestsHelper.GetPrivateField<string>(logger, "_logFilePath");
             string content = File.ReadAllText(logPath);
             Assert.True(content.Contains("Info\t\"Info message\""));
         }
@@ -192,11 +180,11 @@ namespace Waldhari.Core.Tests.Logging
         public void Write_WarnMessage_WritesToFile_WhenLevelAllows()
         {
             var logger = new TsvLogService("TestMod", LogLevel.Info);
-            var method = GetPrivateMethod(logger,"Write");
+            var method = TestsHelper.GetPrivateMethod(logger,"Write");
 
             method.Invoke(logger, new object[] { LogLevel.Warn, "Warning message", null });
 
-            string logPath = GetPrivateField<string>(logger, "_logFilePath");
+            string logPath = TestsHelper.GetPrivateField<string>(logger, "_logFilePath");
             string content = File.ReadAllText(logPath);
             Assert.True(content.Contains("Warn\t\"Warning message\""));
         }
@@ -205,12 +193,12 @@ namespace Waldhari.Core.Tests.Logging
         public void Write_ErrorMessageWithException_WritesToFile()
         {
             var logger = new TsvLogService("TestMod");
-            var method = GetPrivateMethod(logger,"Write");
+            var method = TestsHelper.GetPrivateMethod(logger,"Write");
 
             var ex = new InvalidOperationException("Test exception");
             method.Invoke(logger, new object[] { LogLevel.Error, "Error message", ex });
 
-            string logPath = GetPrivateField<string>(logger, "_logFilePath");
+            string logPath = TestsHelper.GetPrivateField<string>(logger, "_logFilePath");
             string content = File.ReadAllText(logPath);
 
             Assert.True(content.Contains("Error\t\"Error message\""));
@@ -221,11 +209,11 @@ namespace Waldhari.Core.Tests.Logging
         public void Write_MessageBelowLevel_DoesNotWrite()
         {
             var logger = new TsvLogService("TestMod", LogLevel.Warn);
-            var method = GetPrivateMethod(logger,"Write");
+            var method = TestsHelper.GetPrivateMethod(logger,"Write");
 
             method.Invoke(logger, new object[] { LogLevel.Info, "Should not appear", null });
 
-            string logPath = GetPrivateField<string>(logger, "_logFilePath");
+            string logPath = TestsHelper.GetPrivateField<string>(logger, "_logFilePath");
             string content = File.Exists(logPath) ? File.ReadAllText(logPath) : string.Empty;
 
             Assert.False(content.Contains("Should not appear"));
@@ -235,14 +223,14 @@ namespace Waldhari.Core.Tests.Logging
         public void Write_ConcurrentWrites_DoesNotThrow()
         {
             var logger = new TsvLogService("TestMod");
-            var method = GetPrivateMethod(logger, "Write");
+            var method = TestsHelper.GetPrivateMethod(logger, "Write");
 
             Parallel.For(0, 10, i =>
             {
                 method.Invoke(logger, new object[] { LogLevel.Debug, $"Message {i}", null });
             });
 
-            string logPath = GetPrivateField<string>(logger, "_logFilePath");
+            string logPath = TestsHelper.GetPrivateField<string>(logger, "_logFilePath");
             string[] lines = File.ReadAllLines(logPath);
             Assert.AreEqual(10, lines.Length, "Expected 10 log lines");
 
@@ -268,7 +256,7 @@ namespace Waldhari.Core.Tests.Logging
             var logger = new TsvLogService("TestMod");
             logger.Debug("Debug message");
 
-            string logPath = GetPrivateField<string>(logger, "_logFilePath");
+            string logPath = TestsHelper.GetPrivateField<string>(logger, "_logFilePath");
             string[] lines = File.ReadAllLines(logPath);
 
             Assert.AreEqual(1, lines.Length);
@@ -282,7 +270,7 @@ namespace Waldhari.Core.Tests.Logging
             var logger = new TsvLogService("TestMod");
             logger.Info("Info message");
 
-            string logPath = GetPrivateField<string>(logger, "_logFilePath");
+            string logPath = TestsHelper.GetPrivateField<string>(logger, "_logFilePath");
             string[] lines = File.ReadAllLines(logPath);
 
             Assert.AreEqual(1, lines.Length);
@@ -296,7 +284,7 @@ namespace Waldhari.Core.Tests.Logging
             var logger = new TsvLogService("TestMod");
             logger.Warn("Warn message");
 
-            string logPath = GetPrivateField<string>(logger, "_logFilePath");
+            string logPath = TestsHelper.GetPrivateField<string>(logger, "_logFilePath");
             string[] lines = File.ReadAllLines(logPath);
 
             Assert.AreEqual(1, lines.Length);
@@ -311,7 +299,7 @@ namespace Waldhari.Core.Tests.Logging
             var ex = new InvalidOperationException("Test exception");
             logger.Error("Error message", ex);
 
-            string logPath = GetPrivateField<string>(logger, "_logFilePath");
+            string logPath = TestsHelper.GetPrivateField<string>(logger, "_logFilePath");
             string[] lines = File.ReadAllLines(logPath);
 
             Assert.AreEqual(1, lines.Length);

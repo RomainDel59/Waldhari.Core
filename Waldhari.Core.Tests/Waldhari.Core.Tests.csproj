@@ -44,9 +44,13 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="CoreTest.cs" />
+        <Compile Include="Localization\CsvLanguageServiceTest.cs" />
+        <Compile Include="Logging\StubLogService.cs" />
         <Compile Include="Logging\TsvLogServiceTest.cs" />
         <Compile Include="Persistence\XmlPersistenceServiceTests.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
+        <Compile Include="TestsHelper.cs" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\Waldhari.Core\Waldhari.Core.csproj">

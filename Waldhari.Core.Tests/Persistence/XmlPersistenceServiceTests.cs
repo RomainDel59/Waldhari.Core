@@ -1,11 +1,12 @@
 ﻿using System;
 using NUnit.Framework;
 using System.IO;
-using System.Windows.Forms;
 using Waldhari.Core.Persistence;
 
 namespace Waldhari.Core.Tests.Persistence
 {
+    [TestFixture]
+    [TestOf(typeof(XmlPersistenceService))]
     public class XmlPersistenceServiceTests
     {
         // ReSharper disable once MemberCanBePrivate.Global
@@ -18,7 +19,7 @@ namespace Waldhari.Core.Tests.Persistence
         [TearDown]
         public void Cleanup()
         {
-            string scriptsPath = Path.Combine(Application.StartupPath, "scripts");
+            string scriptsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts");
 
             if (Directory.Exists(scriptsPath))
             {
@@ -76,7 +77,7 @@ namespace Waldhari.Core.Tests.Persistence
         [Test]
         public void Constructor_CreatesDirectory_WhenNotExists()
         {
-            string tempPath = Path.Combine(Application.StartupPath + "/scripts/Waldhari");
+            string tempPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory + "/scripts/Waldhari");
             Assert.False(Directory.Exists(tempPath));
 
             var service = new XmlPersistenceService();
@@ -99,7 +100,7 @@ namespace Waldhari.Core.Tests.Persistence
         [Test]
         public void Load_Throws_InvalidOperationException_OnCorruptedFile()
         {
-            string tempDir = Path.Combine(Application.StartupPath + "/scripts/Waldhari");
+            string tempDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory + "/scripts/Waldhari");
             Directory.CreateDirectory(tempDir);
             string filePath = Path.Combine(tempDir, "corrupt.xml");
 

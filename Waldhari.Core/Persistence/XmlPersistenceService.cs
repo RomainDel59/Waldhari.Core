@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
 using System.Xml.Serialization;
 
 namespace Waldhari.Core.Persistence
@@ -13,7 +12,7 @@ namespace Waldhari.Core.Persistence
         public XmlPersistenceService(string extension = "xml")
         {
             // StartupPath = GTAV directory
-            _basePath = Path.Combine(Application.StartupPath, "scripts", "Waldhari");
+            _basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts", "Waldhari");
             _extension = extension;
 
             if (!Directory.Exists(_basePath))

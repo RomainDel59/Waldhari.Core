@@ -44,6 +44,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Logging\TsvLogServiceTest.cs" />
         <Compile Include="Persistence\XmlPersistenceServiceTests.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>

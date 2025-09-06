@@ -1,6 +1,6 @@
 # Waldhari.Core
 
-![.NET for GTA V](https://img.shields.io/badge/Dependency%20for%20GTA%20V%20Mods-Wadlahri.Core-blueviolet?style=for-the-badge&logo=dotnet)
+![.NET for GTA V](https://img.shields.io/badge/Library%20for%20GTA%20V%20Mods-Wadlahri.Core-blueviolet?style=for-the-badge&logo=dotnet)
 ![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-darkgreen?style=for-the-badge&logo=gnu)
 
 **Waldhari.Core** is the core library for the *Waldhari* suite of mods.  

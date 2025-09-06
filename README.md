@@ -2,6 +2,7 @@
 
 ![.NET for GTA V](https://img.shields.io/badge/Library%20for%20GTA%20V%20Mods-Wadlahri.Core-blueviolet?style=for-the-badge&logo=dotnet)
 ![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-darkgreen?style=for-the-badge&logo=gnu)
+![Release](https://img.shields.io/github/v/release/RomainDel59/Waldhari.Core?style=for-the-badge)
 
 **Waldhari.Core** is the core library for the *Waldhari* suite of mods.  
 It provides reusable and extensible services that simplify persistence and logging across multiple mods, while following clean architecture principles (interfaces, modular implementations, unit testing).

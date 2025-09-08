@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Waldhari.Core.Logging;
@@ -12,6 +10,8 @@ namespace Waldhari.Core.Tests.Logging
     [TestOf(typeof(TsvLogService))]
     public class TsvLogServiceTest
     {
+        private const string ModName = "TestMod";
+        
         [SetUp]
         public void Setup()
         {
@@ -35,7 +35,7 @@ namespace Waldhari.Core.Tests.Logging
             var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari");
             Assert.False(Directory.Exists(logsDir));
             
-            var logger = new TsvLogService("TestMod");
+            var logger = new TsvLogService(ModName);
 
             Assert.True(Directory.Exists(logsDir));
             Assert.AreEqual(LogLevel.Debug, logger.Level);
@@ -44,7 +44,7 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void Constructor_SetsLevelProperly()
         {
-            var logger = new TsvLogService("TestMod", LogLevel.Warn);
+            var logger = new TsvLogService(ModName, LogLevel.Warn);
 
             Assert.AreEqual(LogLevel.Warn, logger.Level);
         }
@@ -52,10 +52,10 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void Constructor_DefaultValues_Work()
         {
-            var logger = new TsvLogService();
+            var logger = new TsvLogService(ModName);
 
             var expectedFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari",
-                "Waldhari.Core.log");
+                ModName+".log");
             Assert.AreEqual(expectedFile, TestsHelper.GetPrivateField<string>(logger, "_logFilePath"));
             Assert.AreEqual(LogLevel.Debug, logger.Level);
         }
@@ -82,9 +82,8 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void CleanString_NullInput_ReturnsEmptyQuoted()
         {
-            var logger = new TsvLogService();
+            var logger = new TsvLogService(ModName);
             var method = TestsHelper.GetPrivateMethod(logger, "CleanString");
-            Debug.Assert(method != null, nameof(method) + " != null");
 
             string result = (string)method.Invoke(logger, new object[] { null });
             Assert.AreEqual("\"\"", result);
@@ -93,7 +92,7 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void CleanString_EmptyString_ReturnsEmptyQuoted()
         {
-            var logger = new TsvLogService();
+            var logger = new TsvLogService(ModName);
             var method = TestsHelper.GetPrivateMethod(logger,"CleanString");
 
             string result = (string)method.Invoke(logger, new object[] { string.Empty });
@@ -103,7 +102,7 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void CleanString_NoSpecialCharacters_ReturnsQuoted()
         {
-            var logger = new TsvLogService();
+            var logger = new TsvLogService(ModName);
             var method = TestsHelper.GetPrivateMethod(logger,"CleanString");
 
             string input = "Hello World";
@@ -115,7 +114,7 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void CleanString_Tab_ReplacedWithSpace()
         {
-            var logger = new TsvLogService();
+            var logger = new TsvLogService(ModName);
             var method = TestsHelper.GetPrivateMethod(logger,"CleanString");
 
             string input = "Hello\tWorld";
@@ -127,7 +126,7 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void CleanString_Quotes_EscapedProperly()
         {
-            var logger = new TsvLogService();
+            var logger = new TsvLogService(ModName);
             var method = TestsHelper.GetPrivateMethod(logger,"CleanString");
 
             string input = "She said \"Hello\"";
@@ -139,7 +138,7 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void CleanString_MixedSpecialCharacters()
         {
-            var logger = new TsvLogService();
+            var logger = new TsvLogService(ModName);
             var method = TestsHelper.GetPrivateMethod(logger,"CleanString");
 
             string input = "Line1\nLine2\t\"Quote\"";
@@ -151,7 +150,7 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void Write_DebugMessage_WritesToFile_WhenLevelAllows()
         {
-            var logger = new TsvLogService("TestMod");
+            var logger = new TsvLogService(ModName);
             var method = TestsHelper.GetPrivateMethod(logger,"Write");
 
             method.Invoke(logger, new object[] { LogLevel.Debug, "Debug message", null });
@@ -164,7 +163,7 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void Write_InfoMessage_WritesToFile_WhenLevelAllows()
         {
-            var logger = new TsvLogService("TestMod");
+            var logger = new TsvLogService(ModName);
             var method = TestsHelper.GetPrivateMethod(logger,"Write");
 
             method.Invoke(logger, new object[] { LogLevel.Info, "Info message", null });
@@ -177,7 +176,7 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void Write_WarnMessage_WritesToFile_WhenLevelAllows()
         {
-            var logger = new TsvLogService("TestMod", LogLevel.Info);
+            var logger = new TsvLogService(ModName, LogLevel.Info);
             var method = TestsHelper.GetPrivateMethod(logger,"Write");
 
             method.Invoke(logger, new object[] { LogLevel.Warn, "Warning message", null });
@@ -190,7 +189,7 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void Write_ErrorMessageWithException_WritesToFile()
         {
-            var logger = new TsvLogService("TestMod");
+            var logger = new TsvLogService(ModName);
             var method = TestsHelper.GetPrivateMethod(logger,"Write");
 
             var ex = new InvalidOperationException("Test exception");
@@ -206,7 +205,7 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void Write_MessageBelowLevel_DoesNotWrite()
         {
-            var logger = new TsvLogService("TestMod", LogLevel.Warn);
+            var logger = new TsvLogService(ModName, LogLevel.Warn);
             var method = TestsHelper.GetPrivateMethod(logger,"Write");
 
             method.Invoke(logger, new object[] { LogLevel.Info, "Should not appear", null });
@@ -220,7 +219,7 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void Write_ConcurrentWrites_DoesNotThrow()
         {
-            var logger = new TsvLogService("TestMod");
+            var logger = new TsvLogService(ModName);
             var method = TestsHelper.GetPrivateMethod(logger, "Write");
 
             Parallel.For(0, 10, i =>
@@ -251,7 +250,7 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void Debug_WritesMessage()
         {
-            var logger = new TsvLogService("TestMod");
+            var logger = new TsvLogService(ModName);
             logger.Debug("Debug message");
 
             string logPath = TestsHelper.GetPrivateField<string>(logger, "_logFilePath");
@@ -265,7 +264,7 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void Info_WritesMessage()
         {
-            var logger = new TsvLogService("TestMod");
+            var logger = new TsvLogService(ModName);
             logger.Info("Info message");
 
             string logPath = TestsHelper.GetPrivateField<string>(logger, "_logFilePath");
@@ -279,7 +278,7 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void Warn_WritesMessage()
         {
-            var logger = new TsvLogService("TestMod");
+            var logger = new TsvLogService(ModName);
             logger.Warn("Warn message");
 
             string logPath = TestsHelper.GetPrivateField<string>(logger, "_logFilePath");
@@ -293,7 +292,7 @@ namespace Waldhari.Core.Tests.Logging
         [Test]
         public void Error_WritesMessage_AndException()
         {
-            var logger = new TsvLogService("TestMod");
+            var logger = new TsvLogService(ModName);
             var ex = new InvalidOperationException("Test exception");
             logger.Error("Error message", ex);
 

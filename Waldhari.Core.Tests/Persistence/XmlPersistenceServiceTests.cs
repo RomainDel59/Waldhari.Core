@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using NUnit.Framework;
 using System.IO;
 using Waldhari.Core.Persistence;
@@ -79,6 +79,15 @@ namespace Waldhari.Core.Tests.Persistence
             service.Delete("delete");
 
             Assert.IsFalse(service.Exists("delete"));
+        }
+
+        [Test]
+        public void Delete_DoesNotThrow_WhenFileDoesNotExist()
+        {
+            var service = new XmlPersistenceService();
+            
+            // Should not throw any exception when trying to delete a non-existing file
+            Assert.DoesNotThrow(() => service.Delete("nonexistent"));
         }
         
         [Test]

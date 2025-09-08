@@ -12,6 +12,8 @@ namespace Waldhari.Core.Tests.Localization
     [TestOf(typeof(CsvLanguageService))]
     public class CsvLanguageServiceTest
     {
+        private const string ModName = "TestMod";
+        
         [SetUp]
         public void Setup()
         {
@@ -32,10 +34,10 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void Constructor_DefaultValues_Works()
         {
-            var service = new CsvLanguageService();
+            var service = new CsvLanguageService(ModName);
 
             var expectedDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari",
-                "Waldhari.Core");
+                ModName);
             Assert.True(Directory.Exists(expectedDir));
             CollectionAssert.AreEqual(new List<string> { "General" },
                 TestsHelper.GetPrivateField<List<string>>(service, "_features"));
@@ -45,11 +47,10 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void Constructor_CustomModNameAndLanguage_Works()
         {
-            var modName = "TestMod";
             var languageCode = "fr-FR";
-            var service = new CsvLanguageService(modName, languageCode);
+            var service = new CsvLanguageService(ModName, languageCode);
 
-            var expectedDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari", modName);
+            var expectedDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari", ModName);
             Assert.True(Directory.Exists(expectedDir));
             Assert.AreEqual(languageCode, service.CurrentLanguage);
             CollectionAssert.AreEqual(new List<string> { "General" },
@@ -59,10 +60,9 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void Constructor_CustomFeatures_Works()
         {
-            const string modName = "TestMod";
             const string languageCode = "en-US";
             var features = new List<string> { "Menu", "Mission" };
-            var service = new CsvLanguageService(modName, languageCode, features);
+            var service = new CsvLanguageService(ModName, languageCode, features);
 
             CollectionAssert.AreEqual(features, TestsHelper.GetPrivateField<List<string>>(service, "_features"));
             Assert.AreEqual(languageCode, service.CurrentLanguage);
@@ -82,7 +82,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void Constructor_NullFeatures_DefaultsToGeneral()
         {
-            var service = new CsvLanguageService(features: null);
+            var service = new CsvLanguageService(ModName, features: null);
 
             CollectionAssert.AreEqual(new List<string> { "General" },
                 TestsHelper.GetPrivateField<List<string>>(service, "_features"));
@@ -92,7 +92,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void DetermineLanguage_ReturnsSystemCulture_WhenLanguageCodeIsNull()
         {
-            var service = new CsvLanguageService();
+            var service = new CsvLanguageService(ModName);
             var method = TestsHelper.GetPrivateMethod(service, "DetermineLanguage");
 
             var result = method.Invoke(service, new object[] { null }) as string;
@@ -103,7 +103,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void DetermineLanguage_ReturnsSystemCulture_WhenLanguageCodeIsEmpty()
         {
-            var service = new CsvLanguageService();
+            var service = new CsvLanguageService(ModName);
             var method = TestsHelper.GetPrivateMethod(service, "DetermineLanguage");
 
             var result = method.Invoke(service, new object[] { string.Empty }) as string;
@@ -114,7 +114,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void DetermineLanguage_ReturnsProvidedLanguageCode_WhenNotNullOrEmpty()
         {
-            var service = new CsvLanguageService();
+            var service = new CsvLanguageService(ModName);
             var method = TestsHelper.GetPrivateMethod(service, "DetermineLanguage");
 
             var result = method.Invoke(service, new object[] { "fr-FR" }) as string;
@@ -125,7 +125,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void DetermineLanguage_ReturnsProvidedLanguageCode_WhenWhitespace()
         {
-            var service = new CsvLanguageService();
+            var service = new CsvLanguageService(ModName);
             var method = TestsHelper.GetPrivateMethod(service, "DetermineLanguage");
 
             var result = method.Invoke(service, new object[] { "   " }) as string;
@@ -136,7 +136,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void LoadMessagesFromFile_LoadsValidLines()
         {
-            var service = new CsvLanguageService("TestMod");
+            var service = new CsvLanguageService(ModName);
             var method = TestsHelper.GetPrivateMethod(service, "LoadMessagesFromFile");
 
             var tempFile = Path.GetTempFileName();
@@ -159,7 +159,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void LoadMessagesFromFile_IgnoresEmptyOrCommentLines()
         {
-            var service = new CsvLanguageService("TestMod");
+            var service = new CsvLanguageService(ModName);
             var method = TestsHelper.GetPrivateMethod(service, "LoadMessagesFromFile");
 
             var tempFile = Path.GetTempFileName();
@@ -183,7 +183,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void LoadMessagesFromFile_LogsErrorOnInvalidLine()
         {
-            var service = new CsvLanguageService("TestMod");
+            var service = new CsvLanguageService(ModName);
             var method = TestsHelper.GetPrivateMethod(service, "LoadMessagesFromFile");
 
             var tempFile = Path.GetTempFileName();
@@ -203,7 +203,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void LoadMessagesFromFile_LogsWarningOnDuplicateKey()
         {
-            var service = new CsvLanguageService("TestMod");
+            var service = new CsvLanguageService(ModName);
             var method = TestsHelper.GetPrivateMethod(service, "LoadMessagesFromFile");
 
             var tempFile = Path.GetTempFileName();
@@ -226,7 +226,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void LoadFeatureFiles_AllFilesExist_LoadsAllMessages()
         {
-            var service = new CsvLanguageService("TestMod");
+            var service = new CsvLanguageService(ModName);
             var langDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(langDir);
 
@@ -252,7 +252,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void LoadFeatureFiles_SomeFilesMissing_LoadsOnlyExisting()
         {
-            var service = new CsvLanguageService("TestMod");
+            var service = new CsvLanguageService(ModName);
             var langDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             Directory.CreateDirectory(langDir);
 
@@ -273,7 +273,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void LoadFeatureFiles_FeaturesEmpty_NoExceptionAndNoMessages()
         {
-            var service = new CsvLanguageService("TestMod");
+            var service = new CsvLanguageService(ModName);
             var features = TestsHelper.GetPrivateField<List<string>>(service, "_features");
             features.Clear();
 
@@ -292,7 +292,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void LoadFeatureFiles_DirectoryDoesNotExist_NoException()
         {
-            var service = new CsvLanguageService("TestMod");
+            var service = new CsvLanguageService(ModName);
             var langDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 
             var method = TestsHelper.GetPrivateMethod(service, "LoadFeatureFiles");
@@ -305,16 +305,15 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void Load_LanguageDirExists_LoadsMessages()
         {
-            const string modName = "TestMod";
-            var service = new CsvLanguageService(modName);
-            var langDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari", modName,
+            var service = new CsvLanguageService(ModName);
+            var langDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari", ModName,
                 CultureInfo.CurrentCulture.Name);
             Directory.CreateDirectory(langDir);
 
             const string feature = "General";
             File.WriteAllText(Path.Combine(langDir, $"{feature}.csv"), $"{feature};Value");
 
-            service.Load(modName);
+            service.Load(ModName);
 
             var messages = TestsHelper.GetPrivateField<Dictionary<string, string>>(service, "_messages");
             Assert.True(messages.ContainsKey(feature));
@@ -324,12 +323,9 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void Load_LanguageDirDoesNotExist_NoExceptionAndMessagesEmpty()
         {
-            const string modName = "TestMod";
-            var service = new CsvLanguageService(modName);
-            var langDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari", modName,
-                CultureInfo.CurrentCulture.Name);
+            var service = new CsvLanguageService(ModName);
 
-            Assert.DoesNotThrow(() => service.Load(modName));
+            Assert.DoesNotThrow(() => service.Load(ModName));
 
             var messages = TestsHelper.GetPrivateField<Dictionary<string, string>>(service, "_messages");
             Assert.AreEqual(0, messages.Count);
@@ -338,17 +334,16 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void Load_LanguageCodeSpecified_LoadsCorrectLanguage()
         {
-            const string modName = "TestMod";
             const string languageCode = "fr-FR";
-            var service = new CsvLanguageService(modName);
-            var langDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari", modName,
+            var service = new CsvLanguageService(ModName);
+            var langDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Waldhari", ModName,
                 languageCode);
             Directory.CreateDirectory(langDir);
 
             const string feature = "General";
             File.WriteAllText(Path.Combine(langDir, $"{feature}.csv"), $"{feature};Bonjour");
 
-            service.Load(modName, languageCode);
+            service.Load(ModName, languageCode);
 
             var messages = TestsHelper.GetPrivateField<Dictionary<string, string>>(service, "_messages");
             Assert.True(messages.ContainsKey(feature));
@@ -359,12 +354,11 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void Load_FeaturesEmpty_NoExceptionAndMessagesEmpty()
         {
-            const string modName = "TestMod";
-            var service = new CsvLanguageService(modName);
+            var service = new CsvLanguageService(ModName);
             var features = TestsHelper.GetPrivateField<List<string>>(service, "_features");
             features.Clear();
 
-            service.Load(modName);
+            service.Load(ModName);
 
             var messages = TestsHelper.GetPrivateField<Dictionary<string, string>>(service, "_messages");
             Assert.AreEqual(0, messages.Count);
@@ -373,10 +367,9 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void Load_NullLanguageCode_UsesSystemCulture()
         {
-            const string modName = "TestMod";
-            var service = new CsvLanguageService(modName);
+            var service = new CsvLanguageService(ModName);
 
-            service.Load(modName);
+            service.Load(ModName);
 
             Assert.AreEqual(CultureInfo.CurrentCulture.Name, service.CurrentLanguage);
         }
@@ -384,7 +377,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void GetMessage_KeyExists_ReturnsValue()
         {
-            var service = new CsvLanguageService("TestMod");
+            var service = new CsvLanguageService(ModName);
             var messages = TestsHelper.GetPrivateField<Dictionary<string, string>>(service, "_messages");
             messages["greeting"] = "Hello";
 
@@ -396,7 +389,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void GetMessage_KeyDoesNotExist_ReturnsKey()
         {
-            var service = new CsvLanguageService("TestMod");
+            var service = new CsvLanguageService(ModName);
             var messages = TestsHelper.GetPrivateField<Dictionary<string, string>>(service, "_messages");
             messages.Clear();
 
@@ -408,7 +401,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void GetMessage_NullId_ReturnsEmptyString()
         {
-            var service = new CsvLanguageService("TestMod");
+            var service = new CsvLanguageService(ModName);
 
             var result = service.GetMessage(null);
 
@@ -418,7 +411,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void GetMessage_EmptyId_ReturnsEmptyString()
         {
-            var service = new CsvLanguageService("TestMod");
+            var service = new CsvLanguageService(ModName);
 
             var result = service.GetMessage(string.Empty);
 
@@ -428,7 +421,7 @@ namespace Waldhari.Core.Tests.Localization
         [Test]
         public void GetMessage_KeyExists_CaseInsensitive()
         {
-            var service = new CsvLanguageService("TestMod");
+            var service = new CsvLanguageService(ModName);
             var messages = TestsHelper.GetPrivateField<Dictionary<string, string>>(service, "_messages");
             messages["Greeting"] = "Hello";
 
